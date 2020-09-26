@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
+<head>
+</head>
+<body>
+    <div class="container">
+        <div class="h_iframe">
+<iframe id="player" src="https://www.youtube.com/embed/vrU6YJle6Q4?enablejsapi=1"></iframe>
+<p id="display"></p>
+<div class="myDiv" style="display:none;">
+<p  id="new">Play time of video</p>
+<p id="count">Play time of video</p>
+</div>
+</div>
+</div>
+
+</body>
+<script>
+    $( document ).ready(function() {
+    var seconds = 0;
+    var player, timer, timeSpent = [],display = document.getElementById('display');
+window.onYouTubeIframeAPIReady = function() {
+	player = new YT.Player( 'player', {
+		events: { 'onStateChange': onPlayerStateChange }
+    });
+}
+
+function fancyTimeFormat(duration)
+{   
+    var hrs = ~~(duration / 3600);
+    var mins = ~~((duration % 3600) / 60);
+    var secs = ~~duration % 60;
+    var ret = "";
+
+    if (hrs > 0) {
+        ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+    }
+
+    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+    ret += "" + secs;
+    return ret;
+}
+
+function onPlayerStateChange(event) {
+    if(event.data === 0){
+        clearInterval(timer);
+        console.log(fancyTimeFormat(seconds));
+        $( "#player" ).remove();
+        $( ".myDiv" ).css("display", "block");
+        $( "#count" ).html(fancyTimeFormat(seconds));
+    }else if(event.data === 1){
+        timer = setInterval(
+        function() {
+           seconds++;
+            console.log("you watch: "+ seconds +" seconds of the video");
+           }, 1000
+         );
+    }else if(event.data === 2){
+        clearInterval(timer);
+    }else if(event.data === 3){
+        clearInterval(timer);
+    }else if(event.data === -1){
+    }
+}
+
+function stopVideo() {
+    player.stopVideo();
+
+}
+});
+
+
+</script>
+<style>
+html,body        {height:100%;}
+.h_iframe iframe {position:absolute;top:0;left:0;width:100%; height:100%;}
+.myDiv {
+  border: 5px outset red;
+  background-color: lightblue;    
+  text-align: center;
+  height:30%;
+}
+#count,#new{
+    font-size: 50px;
+
+}
+    </style>
+</body>
+</html>
+
+
+
